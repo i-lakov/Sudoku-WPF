@@ -1,0 +1,246 @@
+﻿<UserControl x:Class="CourseProject.Sudoku"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CourseProject"
+        mc:Ignorable="d"
+        Height="550" Width="370">
+    <UserControl.Background>
+        <LinearGradientBrush StartPoint="0,1" EndPoint="1,1" >
+            <GradientStop Color="CadetBlue" Offset="0.20"/>
+            <GradientStop Color="DarkCyan"  Offset="0.60"/>
+            <GradientStop Color="#009e7a"   Offset="0.99"/>
+        </LinearGradientBrush>
+    </UserControl.Background>
+    <UserControl.Resources>
+        <Style TargetType="TextBox">
+            <Setter Property="FontSize" Value="22"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="IsReadOnly" Value="True"/>
+            <EventSetter Event="TextChanged" Handler="OnTextChanged"/>
+        </Style>
+
+        <Style TargetType="Button">
+            <Setter Property="Grid.ColumnSpan" Value="3"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontFamily" Value="Arial"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="IsEnabled" Value="False"/>
+            <Setter Property="Background">
+                <Setter.Value>
+                    <SolidColorBrush Color="Gray" Opacity="0.8"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="Label">
+            <Setter Property="FontSize" Value="44"/>
+            <Setter Property="FontFamily" Value="Bebas Neue"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid x:Name="GridContainer">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.5*"/>
+            <RowDefinition Height="2*"/>
+
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="9">
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="_Game">
+                    <MenuItem Header="_New Game">
+                        <MenuItem.Icon>
+                            <Image Source="/CourseProject;component/Resources/newgame.ico"/>
+                        </MenuItem.Icon>
+                        <MenuItem Header="_Easy" Icon="1" Click="MenuNewGame_Click"/>
+                        <MenuItem Header="_Medium" Icon="2" Click="MenuNewGame_Click"/>
+                        <MenuItem Header="_Hard" Icon="3" Click="MenuNewGame_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="_Save" x:Name="MenuSave" Click="MenuSave_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/CourseProject;component/Resources/save.ico"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="_Load" Click="MenuLoad_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/CourseProject;component/Resources/load.ico"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="_Exit" Click="MenuExit_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/CourseProject;component/Resources/exit.ico"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="_Statistics" x:Name="MenuStatistics" Click="MenuStatistics_Click"/>
+                <MenuItem Header="_Solve" x:Name="MenuSolve" Click="BtnSolve_Click" IsEnabled="False"/>
+                <MenuItem Header="_Undo" x:Name="MenuUndo" Click="BtnUndo_Click" IsEnabled="False"/>
+                <MenuItem Header="_Redo" x:Name="MenuRedo" Click="BtnRedo_Click" IsEnabled="False"/>
+            </Menu>
+        </DockPanel>
+
+        <!-- #region Header labels -->
+        <Label Grid.Row="1" Grid.Column="0" x:Name="LblTimer" Grid.ColumnSpan="9" Content="00:00"
+               VerticalContentAlignment="Bottom" HorizontalContentAlignment="Right" />
+
+        <Label Grid.Row="1" Grid.Column="0"                   Grid.ColumnSpan="9" Content="Sudoku"
+               VerticalContentAlignment="Bottom" HorizontalContentAlignment="Left"/>
+
+        <Label Grid.Row="1" Grid.Column="0" x:Name="LblDifficulty" Grid.ColumnSpan="9" Content="No difficulty" FontSize="16"
+               VerticalContentAlignment="Top" HorizontalContentAlignment="Right"/>
+        <!--#endregion-->
+
+        <!-- #region Sudoku table -->
+        <!-- (numeration left to right, top to bottom) -->
+
+        <!-- #region Subgrid 1 -->
+        <TextBox x:Name="TxtX0Y0" BorderThickness="2.0 2.0 0.5 0.5" Grid.Column="0" Grid.Row="2 "/>
+        <TextBox x:Name="TxtX0Y1" BorderThickness="2.0 0.5 0.5 0.5" Grid.Column="0" Grid.Row="3 "/>
+        <TextBox x:Name="TxtX0Y2" BorderThickness="2.0 0.5 0.5 2.0" Grid.Column="0" Grid.Row="4 "/>
+        <TextBox x:Name="TxtX1Y0" BorderThickness="0.5 2.0 0.5 0.5" Grid.Column="1" Grid.Row="2 "/>
+        <TextBox x:Name="TxtX1Y1" BorderThickness="0.5 0.5 0.5 0.5" Grid.Column="1" Grid.Row="3 "/>
+        <TextBox x:Name="TxtX1Y2" BorderThickness="0.5 0.5 0.5 2.0" Grid.Column="1" Grid.Row="4 "/>
+        <TextBox x:Name="TxtX2Y0" BorderThickness="0.5 2.0 2.0 0.5" Grid.Column="2" Grid.Row="2 "/>
+        <TextBox x:Name="TxtX2Y1" BorderThickness="0.5 0.5 2.0 0.5" Grid.Column="2" Grid.Row="3 "/>
+        <TextBox x:Name="TxtX2Y2" BorderThickness="0.5 0.5 2.0 2.0" Grid.Column="2" Grid.Row="4 "/>
+        <!--#endregion-->
+
+        <!-- #region Subgrid 2 -->
+        <TextBox x:Name="TxtX3Y0" BorderThickness="2.0 2.0 0.5 0.5" Grid.Column="3" Grid.Row="2 "/>
+        <TextBox x:Name="TxtX3Y1" BorderThickness="2.0 0.5 0.5 0.5" Grid.Column="3" Grid.Row="3 "/>
+        <TextBox x:Name="TxtX3Y2" BorderThickness="2.0 0.5 0.5 2.0" Grid.Column="3" Grid.Row="4 "/>
+        <TextBox x:Name="TxtX4Y0" BorderThickness="0.5 2.0 0.5 0.5" Grid.Column="4" Grid.Row="2 "/>
+        <TextBox x:Name="TxtX4Y1" BorderThickness="0.5 0.5 0.5 0.5" Grid.Column="4" Grid.Row="3 "/>
+        <TextBox x:Name="TxtX4Y2" BorderThickness="0.5 0.5 0.5 2.0" Grid.Column="4" Grid.Row="4 "/>
+        <TextBox x:Name="TxtX5Y0" BorderThickness="0.5 2.0 2.0 0.5" Grid.Column="5" Grid.Row="2 "/>
+        <TextBox x:Name="TxtX5Y1" BorderThickness="0.5 0.5 2.0 0.5" Grid.Column="5" Grid.Row="3 "/>
+        <TextBox x:Name="TxtX5Y2" BorderThickness="0.5 0.5 2.0 2.0" Grid.Column="5" Grid.Row="4 "/>
+        <!--#endregion-->
+
+        <!-- #region Subgrid 3 -->
+        <TextBox x:Name="TxtX6Y0" BorderThickness="2.0 2.0 0.5 0.5" Grid.Column="6" Grid.Row="2 "/>
+        <TextBox x:Name="TxtX6Y1" BorderThickness="2.0 0.5 0.5 0.5" Grid.Column="6" Grid.Row="3 "/>
+        <TextBox x:Name="TxtX6Y2" BorderThickness="2.0 0.5 0.5 2.0" Grid.Column="6" Grid.Row="4 "/>
+        <TextBox x:Name="TxtX7Y0" BorderThickness="0.5 2.0 0.5 0.5" Grid.Column="7" Grid.Row="2 "/>
+        <TextBox x:Name="TxtX7Y1" BorderThickness="0.5 0.5 0.5 0.5" Grid.Column="7" Grid.Row="3 "/>
+        <TextBox x:Name="TxtX7Y2" BorderThickness="0.5 0.5 0.5 2.0" Grid.Column="7" Grid.Row="4 "/>
+        <TextBox x:Name="TxtX8Y0" BorderThickness="0.5 2.0 2.0 0.5" Grid.Column="8" Grid.Row="2 "/>
+        <TextBox x:Name="TxtX8Y1" BorderThickness="0.5 0.5 2.0 0.5" Grid.Column="8" Grid.Row="3 "/>
+        <TextBox x:Name="TxtX8Y2" BorderThickness="0.5 0.5 2.0 2.0" Grid.Column="8" Grid.Row="4 "/>
+        <!--#endregion-->
+
+        <!-- #region Subgrid 4 -->
+        <TextBox x:Name="TxtX0Y3" BorderThickness="2.0 2.0 0.5 0.5" Grid.Column="0" Grid.Row="5 "/>
+        <TextBox x:Name="TxtX0Y4" BorderThickness="2.0 0.5 0.5 0.5" Grid.Column="0" Grid.Row="6 "/>
+        <TextBox x:Name="TxtX0Y5" BorderThickness="2.0 0.5 0.5 2.0" Grid.Column="0" Grid.Row="7 "/>
+        <TextBox x:Name="TxtX1Y3" BorderThickness="0.5 2.0 0.5 0.5" Grid.Column="1" Grid.Row="5 "/>
+        <TextBox x:Name="TxtX1Y4" BorderThickness="0.5 0.5 0.5 0.5" Grid.Column="1" Grid.Row="6 "/>
+        <TextBox x:Name="TxtX1Y5" BorderThickness="0.5 0.5 0.5 2.0" Grid.Column="1" Grid.Row="7 "/>
+        <TextBox x:Name="TxtX2Y3" BorderThickness="0.5 2.0 2.0 0.5" Grid.Column="2" Grid.Row="5 "/>
+        <TextBox x:Name="TxtX2Y4" BorderThickness="0.5 0.5 2.0 0.5" Grid.Column="2" Grid.Row="6 "/>
+        <TextBox x:Name="TxtX2Y5" BorderThickness="0.5 0.5 2.0 2.0" Grid.Column="2" Grid.Row="7 "/>
+        <!--#endregion-->
+
+        <!-- #region Subgrid 5 -->
+        <TextBox x:Name="TxtX3Y3" BorderThickness="2.0 2.0 0.5 0.5" Grid.Column="3" Grid.Row="5 "/>
+        <TextBox x:Name="TxtX3Y4" BorderThickness="2.0 0.5 0.5 0.5" Grid.Column="3" Grid.Row="6 "/>
+        <TextBox x:Name="TxtX3Y5" BorderThickness="2.0 0.5 0.5 2.0" Grid.Column="3" Grid.Row="7 "/>
+        <TextBox x:Name="TxtX4Y3" BorderThickness="0.5 2.0 0.5 0.5" Grid.Column="4" Grid.Row="5 "/>
+        <TextBox x:Name="TxtX4Y4" BorderThickness="0.5 0.5 0.5 0.5" Grid.Column="4" Grid.Row="6 "/>
+        <TextBox x:Name="TxtX4Y5" BorderThickness="0.5 0.5 0.5 2.0" Grid.Column="4" Grid.Row="7 "/>
+        <TextBox x:Name="TxtX5Y3" BorderThickness="0.5 2.0 2.0 0.5" Grid.Column="5" Grid.Row="5 "/>
+        <TextBox x:Name="TxtX5Y4" BorderThickness="0.5 0.5 2.0 0.5" Grid.Column="5" Grid.Row="6 "/>
+        <TextBox x:Name="TxtX5Y5" BorderThickness="0.5 0.5 2.0 2.0" Grid.Column="5" Grid.Row="7 "/>
+        <!--#endregion-->
+
+        <!-- #region Subgrid 6 -->
+        <TextBox x:Name="TxtX6Y3" BorderThickness="2.0 2.0 0.5 0.5" Grid.Column="6" Grid.Row="5 "/>
+        <TextBox x:Name="TxtX6Y4" BorderThickness="2.0 0.5 0.5 0.5" Grid.Column="6" Grid.Row="6 "/>
+        <TextBox x:Name="TxtX6Y5" BorderThickness="2.0 0.5 0.5 2.0" Grid.Column="6" Grid.Row="7 "/>
+        <TextBox x:Name="TxtX7Y3" BorderThickness="0.5 2.0 0.5 0.5" Grid.Column="7" Grid.Row="5 "/>
+        <TextBox x:Name="TxtX7Y4" BorderThickness="0.5 0.5 0.5 0.5" Grid.Column="7" Grid.Row="6 "/>
+        <TextBox x:Name="TxtX7Y5" BorderThickness="0.5 0.5 0.5 2.0" Grid.Column="7" Grid.Row="7 "/>
+        <TextBox x:Name="TxtX8Y3" BorderThickness="0.5 2.0 2.0 0.5" Grid.Column="8" Grid.Row="5 "/>
+        <TextBox x:Name="TxtX8Y4" BorderThickness="0.5 0.5 2.0 0.5" Grid.Column="8" Grid.Row="6 "/>
+        <TextBox x:Name="TxtX8Y5" BorderThickness="0.5 0.5 2.0 2.0" Grid.Column="8" Grid.Row="7 "/>
+        <!--#endregion-->
+
+        <!-- #region Subgrid 7 -->
+        <TextBox x:Name="TxtX0Y6" BorderThickness="2.0 2.0 0.5 0.5" Grid.Column="0" Grid.Row="8 "/>
+        <TextBox x:Name="TxtX0Y7" BorderThickness="2.0 0.5 0.5 0.5" Grid.Column="0" Grid.Row="9 "/>
+        <TextBox x:Name="TxtX0Y8" BorderThickness="2.0 0.5 0.5 2.0" Grid.Column="0" Grid.Row="10"/>
+        <TextBox x:Name="TxtX1Y6" BorderThickness="0.5 2.0 0.5 0.5" Grid.Column="1" Grid.Row="8 "/>
+        <TextBox x:Name="TxtX1Y7" BorderThickness="0.5 0.5 0.5 0.5" Grid.Column="1" Grid.Row="9 "/>
+        <TextBox x:Name="TxtX1Y8" BorderThickness="0.5 0.5 0.5 2.0" Grid.Column="1" Grid.Row="10"/>
+        <TextBox x:Name="TxtX2Y6" BorderThickness="0.5 2.0 2.0 0.5" Grid.Column="2" Grid.Row="8 "/>
+        <TextBox x:Name="TxtX2Y7" BorderThickness="0.5 0.5 2.0 0.5" Grid.Column="2" Grid.Row="9 "/>
+        <TextBox x:Name="TxtX2Y8" BorderThickness="0.5 0.5 2.0 2.0" Grid.Column="2" Grid.Row="10"/>
+        <!--#endregion-->
+
+        <!-- #region Subgrid 8 -->
+        <TextBox x:Name="TxtX3Y6" BorderThickness="2.0 2.0 0.5 0.5" Grid.Column="3" Grid.Row="8 "/>
+        <TextBox x:Name="TxtX3Y7" BorderThickness="2.0 0.5 0.5 0.5" Grid.Column="3" Grid.Row="9 "/>
+        <TextBox x:Name="TxtX3Y8" BorderThickness="2.0 0.5 0.5 2.0" Grid.Column="3" Grid.Row="10"/>
+        <TextBox x:Name="TxtX4Y6" BorderThickness="0.5 2.0 0.5 0.5" Grid.Column="4" Grid.Row="8 "/>
+        <TextBox x:Name="TxtX4Y7" BorderThickness="0.5 0.5 0.5 0.5" Grid.Column="4" Grid.Row="9 "/>
+        <TextBox x:Name="TxtX4Y8" BorderThickness="0.5 0.5 0.5 2.0" Grid.Column="4" Grid.Row="10"/>
+        <TextBox x:Name="TxtX5Y6" BorderThickness="0.5 2.0 2.0 0.5" Grid.Column="5" Grid.Row="8 "/>
+        <TextBox x:Name="TxtX5Y7" BorderThickness="0.5 0.5 2.0 0.5" Grid.Column="5" Grid.Row="9 "/>
+        <TextBox x:Name="TxtX5Y8" BorderThickness="0.5 0.5 2.0 2.0" Grid.Column="5" Grid.Row="10"/>
+        <!--#endregion-->
+
+        <!-- #region Subgrid 9 -->
+        <TextBox x:Name="TxtX6Y6" BorderThickness="2.0 2.0 0.5 0.5" Grid.Column="6" Grid.Row="8 "/>
+        <TextBox x:Name="TxtX6Y7" BorderThickness="2.0 0.5 0.5 0.5" Grid.Column="6" Grid.Row="9 "/>
+        <TextBox x:Name="TxtX6Y8" BorderThickness="2.0 0.5 0.5 2.0" Grid.Column="6" Grid.Row="10"/>
+        <TextBox x:Name="TxtX7Y6" BorderThickness="0.5 2.0 0.5 0.5" Grid.Column="7" Grid.Row="8 "/>
+        <TextBox x:Name="TxtX7Y7" BorderThickness="0.5 0.5 0.5 0.5" Grid.Column="7" Grid.Row="9 "/>
+        <TextBox x:Name="TxtX7Y8" BorderThickness="0.5 0.5 0.5 2.0" Grid.Column="7" Grid.Row="10"/>
+        <TextBox x:Name="TxtX8Y6" BorderThickness="0.5 2.0 2.0 0.5" Grid.Column="8" Grid.Row="8 "/>
+        <TextBox x:Name="TxtX8Y7" BorderThickness="0.5 0.5 2.0 0.5" Grid.Column="8" Grid.Row="9 "/>
+        <TextBox x:Name="TxtX8Y8" BorderThickness="0.5 0.5 2.0 2.0" Grid.Column="8" Grid.Row="10"/>
+        <!--#endregion-->
+        <!--#endregion-->
+
+        <!-- Solve button -->
+        <Button Grid.Column="0" Grid.Row="11" Margin="5 5 5 5" Grid.RowSpan="2" Content="Solve&#xa; Now" x:Name="BtnSolve" Click="BtnSolve_Click" FontSize="22"/>
+
+        <!-- Undo & Redo buttons -->
+        <Button Grid.Column="6" Grid.Row="11" Margin="5 5 5 2.5" Content="Undo" x:Name="BtnUndo" Click="BtnUndo_Click"/>
+        <Button Grid.Column="6" Grid.Row="12" Margin="5 2.5 5 5" Content="Redo" x:Name="BtnRedo" Click="BtnRedo_Click"/>
+
+    </Grid>
+</UserControl>
+
